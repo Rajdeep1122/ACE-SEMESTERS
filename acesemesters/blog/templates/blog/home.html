@@ -1,0 +1,54 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div class="flex flex-col md:flex-row gap-8">
+    <!-- Main Content -->
+    <div class="w-full md:w-3/4">
+        {% if category %}
+            <h1 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">Posts in "{{ category.name }}"</h1>
+        {% else %}
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Latest Posts</h1>
+        {% endif %}
+
+        {% for post in posts %}
+            <div class="bg-white rounded-lg shadow-md mb-6 p-6 hover:shadow-xl transition-shadow duration-300">
+                <div class="flex items-center mb-4">
+                    <div class="text-sm text-gray-500">
+                        <p>By {{ post.author.username }} on {{ post.created_at|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                    <a href="{% url 'post_detail' post.pk %}" class="hover:text-blue-600 transition-colors duration-300">{{ post.title }}</a>
+                </h2>
+                {% if post.category %}
+                    <a href="{% url 'category' post.category.name %}" class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">{{ post.category.name }}</a>
+                {% endif %}
+                <p class="text-gray-700 mt-4">
+                    {{ post.content|slice:":200" }}...
+                </p>
+                <div class="mt-4">
+                     <a href="{% url 'post_detail' post.pk %}" class="text-blue-600 hover:underline font-semibold">Read More &rarr;</a>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-gray-600">No posts have been made yet. Be the first to share!</p>
+        {% endfor %}
+    </div>
+
+    <!-- Sidebar for Categories -->
+    <div class="w-full md:w-1/4">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Categories</h3>
+            <ul>
+                {% for cat in categories %}
+                    <li class="mb-2">
+                        <a href="{% url 'category' cat.name %}" class="text-gray-700 hover:text-blue-600 transition-colors duration-300">{{ cat.name }}</a>
+                    </li>
+                {% empty %}
+                    <li>No categories yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
